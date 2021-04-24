@@ -1,32 +1,47 @@
 (import janetls)
 (import json)
 
-(defn- make-signature [secret b64-header b64-payload]
-  (janetls/md/hmac
-   :sha256 secret
-   (string/join [b64-header b64-payload] ".")
-   :raw))
+(defn sign [key msg]
+  (janetls/md/hmac :sha256 key msg :raw))
 
-(defn make [secret payload-ds]
-  (def header (json/encode {:alg "HS256" :typ "JWT"}))
-  (def payload (json/encode payload-ds))
-  (def b64-header (janetls/base64/encode header :url-unpadded))
-  (def b64-payload (janetls/base64/encode payload :url-unpadded))
-  (def signature (make-signature secret b64-header b64-payload))
-  (def b64-signature (janetls/base64/encode signature :url-unpadded))
-  (string/join [b64-header b64-payload b64-signature] "."))
+(defn get-signature-key [key date-stamp region-name service-name]
+  (-> (sign (string "AWS4" key) date-stamp)
+      (sign region-name)
+      (sign service-name)
+      (sign "aws4_request")))
 
-(defn verify-signature [secret jwt]
-  (def parts (string/split "." jwt))
-  (def b64-header (get parts 0))
-  (def b64-payload (get parts 1))
-  (def b64-signature (get parts 2))
-  (def signature-actual (janetls/base64/decode b64-signature :url-unpadded))
-  (def signature-expected (make-signature secret b64-header b64-payload))
-  (= signature-actual signature-expected))
+(defn make [opts]
+  # Pull in user defined values
+  (def access-key (get opts :access-key))
+  (def secret-key (get opts :secret-key))
+  (def request-parameters (get opts :request-parameters))
+  (def host (get opts :host))
+  (def amzdate (get opts :amzdate))
+  (def method (get opts :method))
+  (def datestamp (get opts :datestamp))
+  (def region (get opts :region))
+  (def service (get opts :service))
 
-(defn get-payload [jwt]
-  (-> (def parts (string/split "." jwt))
-      (get 1)
-      (janetls/base64/decode :url-unpadded)
-      json/decode))
+  # Set up values that don't change
+  (def canonical-uri "/")
+  (def canonical-querystring request-parameters)
+  (def canonical-headers
+    (string "host:" host "\n" "x-amz-date:" amzdate "\n"))
+  (def signed-headers "host;x-amz-date")
+  (def payload-hash (janetls/md/digest :sha256 ""))
+  (def canonical-request
+    (string method "\n" canonical-uri "\n" canonical-querystring "\n"
+            canonical-headers "\n" signed-headers "\n" payload-hash))
+
+  (pp canonical-request)
+
+  (def algorithm "AWS4-HMAC-SHA256")
+  (def credential-scope
+    (string datestamp "/" region "/" service "/" "aws4_request"))
+  (def string-to-sign
+    (string algorithm "\n" amzdate "\n" credential-scope "\n"
+            (janetls/md/digest :sha256 canonical-request)))
+  (def signing-key (get-signature-key secret-key datestamp region service))
+  (def signature (janetls/md/hmac :sha256 signing-key string-to-sign))
+
+  {:sig signature})

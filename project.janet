@@ -1,6 +1,6 @@
 (declare-project
- :name "com.ahungry.crypt.jwt"
- :description "JWT Implementation using Janetls"
+ :name "com.ahungry.crypt.aws4"
+ :description "AWS4 Signing Implementation using Janetls"
  :author "Matthew Carter"
  :license "MIT"
  :dependencies
@@ -13,10 +13,10 @@
    :repo "https://github.com/LeviSchuck/janetls"
    }
   ]
- :url "https://github.com/ahungry/com.ahungry.crypt.jwt/"
- :repo "git+https://github.com/ahungry/com.ahungry.crypt.jwt.git")
+ :url "https://github.com/ahungry/com.ahungry.crypt.aws4/"
+ :repo "git+https://github.com/ahungry/com.ahungry.crypt.aws4.git")
 
 (declare-source
-  :name "com.ahungry.crypt.jwt"
-  :source ["com.ahungry.crypt.jwt.janet"]
+  :name "com.ahungry.crypt.aws4"
+  :source ["com.ahungry.crypt.aws4.janet"]
   )
