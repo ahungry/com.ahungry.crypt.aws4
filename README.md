@@ -50,6 +50,7 @@ Via your project.janet file:
 
               # This should be dynamic/the current date in UTC
               :datestamp "20210424"
+
               :region "us-east-1"
               :service "ec2"
 
