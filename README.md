@@ -44,11 +44,11 @@ Via your project.janet file:
   (aws4/make {:request-parameters "Action=DescribeRegions&Version=2013-10-15"
               :host "ec2.amazonaws.com"
 
-              # This should be dynamic/the current datetime
+              # This should be dynamic/the current datetime in UTC
               :amzdate "20210424T182850Z"
               :method "GET"
 
-              # This should be dynamic/the current date
+              # This should be dynamic/the current date in UTC
               :datestamp "20210424"
               :region "us-east-1"
               :service "ec2"
