@@ -1,5 +1,4 @@
 (import janetls)
-(import json)
 
 (defn sign [key msg]
   (janetls/md/hmac :sha256 key msg :raw))

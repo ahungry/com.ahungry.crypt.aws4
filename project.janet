@@ -5,7 +5,6 @@
  :license "MIT"
  :dependencies
  [
-  "json"
   {
    # Use the official, not the fork, as they may conflict with each other
    # if users were to have both installed.

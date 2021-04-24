@@ -22,7 +22,7 @@
 (def fake-headers (get request-opts :headers))
 (def fake-url (get request-opts :request-url))
 
-(pp request-opts)
+#(pp request-opts)
 
 # This matches the AWS sample python implementation output for this portion
 (assert (= fake-sig "0be5bd45d1896db0d24b515d1c29faa6005f53c4f80dba6b7c4b6263e74e26b6"))
