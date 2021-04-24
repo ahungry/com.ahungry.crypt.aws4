@@ -80,6 +80,24 @@ will produce the output in request-opts as such:
 which could then be passed into an HTTPS client and used to interact
 with AWS.
 
+# Notes
+
+Dynamic header signing is not implemented - the only headers that will
+be signed are the minimum required (host and x-amz-date).
+
+The AWS website has documentation for the various endpoint inputs
+towards the bottom of their docs - if constructing an SDK or
+interacting with AWS manually, the headers you send must match the
+headers shown in the example exactly (including custom Content-Type of
+some x-amz-json-1.1) - even the 1.1 must match or you'll get obscure
+errors if using 1.0 on an endpoint not explicitly documenting it as such.
+
+Also, while many GET endpoints will use request-parameters
+(querystring path), most POST endpoints will just expect that to be
+empty - and some of the AWS names are quite confusing - SecretsManager
+uses GetSecretValue, but despite the name and action performed,
+requires a POST with a content body definining the SecretId key/value combo.
+
 # Copyright
 
 Copyright (c) 2021 Matthew Carter <m@ahungry.com>
