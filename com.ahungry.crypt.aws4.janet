@@ -21,6 +21,7 @@
   (def datestamp (get opts :datestamp))
   (def region (get opts :region))
   (def service (get opts :service))
+  (def endpoint (get opts :endpoint))
 
   # Set up values that don't change
   (def canonical-uri "/")
@@ -32,9 +33,6 @@
   (def canonical-request
     (string method "\n" canonical-uri "\n" canonical-querystring "\n"
             canonical-headers "\n" signed-headers "\n" payload-hash))
-
-  (pp canonical-request)
-
   (def algorithm "AWS4-HMAC-SHA256")
   (def credential-scope
     (string datestamp "/" region "/" service "/" "aws4_request"))
@@ -44,4 +42,12 @@
   (def signing-key (get-signature-key secret-key datestamp region service))
   (def signature (janetls/md/hmac :sha256 signing-key string-to-sign))
 
-  {:sig signature})
+  (def authorization-header
+    (string algorithm " " "Credential=" access-key "/" credential-scope ", "
+            "SignedHeaders=" signed-headers ", " "Signature=" signature))
+  (def headers {:x-amz-date amzdate
+                :Authorization authorization-header
+                :Host host})
+  (def request-url (string endpoint "?" canonical-querystring))
+
+  {:signature signature :headers headers :request-url request-url})
