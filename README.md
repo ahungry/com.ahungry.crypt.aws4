@@ -8,10 +8,7 @@ AWS v4 Signature implementation using the Janetls library features (https://gith
 - [com.ahungry.crypt.aws4](#comahungrycryptaws4)
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Encrypt a AWS4:](#encrypt-a-aws4)
-    - [Verify a AWS4:](#verify-a-aws4)
-    - [Get the payload/contents of a AWS4:](#get-the-payloadcontents-of-a-aws4)
-- [Notes](#notes)
+    - [Create the request-opts](#create-the-request-opts)
 - [Copyright](#copyright)
 - [License](#license)
 
